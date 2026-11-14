@@ -80,5 +80,66 @@ pipeline {
                 '''
             }
         }
+
+        stage('Post-Deployment Smoke Tests') {
+            steps {
+                sh '''
+                    set -eu
+
+                    PORT=18086
+                    LOG_FILE="$WORKSPACE/port-forward.log"
+
+                    kubectl port-forward \
+                        -n "$K8S_NAMESPACE" \
+                        --address 127.0.0.1 \
+                        service/"$APP_NAME"-service \
+                        "$PORT":80 > "$LOG_FILE" 2>&1 &
+
+                    PF_PID=$!
+
+                    cleanup() {
+                        kill "$PF_PID" 2>/dev/null || true
+                        wait "$PF_PID" 2>/dev/null || true
+                    }
+
+                    trap cleanup EXIT
+
+                    echo "Waiting for application..."
+
+                    READY=0
+                    for attempt in $(seq 1 30); do
+                        if curl --silent --fail \
+                            "http://127.0.0.1:$PORT/health" >/dev/null; then
+                            READY=1
+                            break
+                        fi
+                        sleep 2
+                    done
+
+                    if [ "$READY" -ne 1 ]; then
+                        echo "Application did not become ready."
+                        cat "$LOG_FILE"
+                        exit 1
+                    fi
+
+                    for endpoint in / /health /ready; do
+                        echo "Checking $endpoint"
+
+                        STATUS=$(curl --silent --output /dev/null \
+                            --write-out "%{http_code}" \
+                            "http://127.0.0.1:$PORT$endpoint")
+
+                        echo "HTTP status: $STATUS"
+
+                        if [ "$STATUS" != "200" ]; then
+                            echo "Smoke test failed: $endpoint"
+                            exit 1
+                        fi
+                    done
+
+                    echo "All smoke tests passed."
+                '''
+            }
+        }
     }
 }
