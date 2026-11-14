@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: end-to-end-devops-cicd-service
+  namespace: devops-cicd
+spec:
+  type: ClusterIP
+  selector:
+    app: end-to-end-devops-cicd
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000
