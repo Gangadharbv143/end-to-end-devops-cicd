@@ -23,3 +23,13 @@ def test_ready_endpoint():
 
     assert response.status_code == 200
     assert response.json["status"] == "ready"
+
+
+def test_metrics_endpoint():
+    client = app.test_client()
+    client.get("/health")
+    response = client.get("/metrics")
+    output = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "flask_http_requests_total" in output
+    assert "flask_http_request_duration_seconds_count" in output
