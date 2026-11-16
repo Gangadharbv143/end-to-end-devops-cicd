@@ -30,6 +30,38 @@ flowchart TD
     O[Grafana Persistent Volume] --> M
 ```
 
+## Project Screenshots
+
+### 1. Jenkins CI/CD Pipeline
+
+Successful Jenkins pipeline showing automated checkout, testing, Docker image build, Kubernetes deployment, and post-deployment validation.
+
+![Jenkins CI/CD Pipeline](screenshots/01-jenkins-successful-pipeline.png)
+
+### 2. Kubernetes Deployment
+
+Kubernetes deployment showing application pods running successfully in the Minikube cluster.
+
+![Kubernetes Deployment](screenshots/02-kubernetes-deployment.png)
+
+### 3. Prometheus Monitoring
+
+Prometheus targets page showing successful metric collection from the application pods and Prometheus itself.
+
+![Prometheus Targets](screenshots/03-prometheus-targets.png)
+
+### 4. Grafana Monitoring Dashboard
+
+Grafana dashboard displaying application request rates, response latency, HTTP status rates, and Kubernetes pod metrics.
+
+![Grafana Dashboard](screenshots/04-grafana-dashboard.png)
+
+### 5. GitHub Repository
+
+GitHub repository containing the complete project source code and configuration files.
+
+![GitHub Repository](screenshots/05-github-repository.png)
+
 ## Technologies Used
 
 | Category | Technologies |
@@ -151,6 +183,12 @@ end-to-end-devops-cicd/
 │   └── prometheus-rbac.yaml
 ├── tests/
 │   └── test_app.py
+├── screenshots/
+│   ├── 01-jenkins-successful-pipeline.png
+│   ├── 02-kubernetes-deployment.png
+│   ├── 03-prometheus-targets.png
+│   ├── 04-grafana-dashboard.png
+│   └── 05-github-repository.png
 ├── Dockerfile
 ├── docker-entrypoint.sh
 ├── gunicorn.conf.py
